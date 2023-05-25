@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class ControleDeFerramentas {
 	// criando os vetores
-	static String[] categoriaFerramentas = new String[1];
+	static String[] categoriaFerramentas = new String[3];
 	static String pessoa[][] = new String[2][2];
 	static String objeto[][] = new String[4][4];
 	static String emprestimo[][] = new String[7][7];
@@ -50,19 +50,46 @@ public class ControleDeFerramentas {
 		return posicaoLivre;
 	}
 
-	public int verificaSeExistemPessoasCadastradas(String[][] matriz, int idPessoa) {
-		int i;
-		int j;
+	public int verificaSeExistemCadastrosMatriz(String[][] matriz, int id) {
 		int existeCadastro = -1;
-		for (i = 0; i < matriz.length; i++) { // recebe por paramentro uma matriz e o id da pessoa, verifica se
-			for (j = 0; j < matriz.length; j++) { // existe aquele id cadastrado, e se tiver algum dado gravado naquele
-				if (i == idPessoa && matriz[i][1] != "") { // id, passa aquela posicao pra variavel existeCadastro
+		for (int i = 0; i < matriz.length; i++) { // recebe por paramentro uma matriz e o id da pessoa, verifica se
+			for (int j = 0; j < matriz.length; j++) { // existe aquele id cadastrado, e se tiver algum dado gravado
+														// naquele id, passa aquela posicao pra variavel existeCadastro
+				if (i == id && matriz[i][1] != "") {
 					existeCadastro = i;
 					i = matriz.length;
 				}
 			}
 		}
 		return existeCadastro;
+	}
+
+	public int verificaSeExistemCadastrosVetor(String vetor[], int id) {
+		int existeCadastro = -1;
+		for (int i = 0; i < vetor.length; i++) {
+			if (i == id && vetor[i] == "") {
+				existeCadastro = i;
+				i = vetor.length;
+			}
+		}
+		return existeCadastro;
+	}
+
+	public void listaPessoas() {
+		for (int i = 0; i < pessoa.length; i++) {
+			System.out.println("ID         NOME        E-MAIL");
+			System.out.print(i + "  -  ");
+			for (int j = 0; j < pessoa.length; j++) {
+				System.out.print("     " + pessoa[i][j] + "  ");
+			}
+			System.out.println("");
+		}
+	}
+
+	public void listaCategoriaFerramentas() {
+		for (int i = 0; i < categoriaFerramentas.length; i++) {
+			System.out.println(i + "  -  " + categoriaFerramentas[i]);
+		}
 	}
 
 	public void menu() {
@@ -86,7 +113,7 @@ public class ControleDeFerramentas {
 				pessoa();
 				break;
 			case 2:
-				categoriaObtejo();
+				categoriaFerramenta();
 				break;
 			case 3:
 				objetos();
@@ -113,46 +140,41 @@ public class ControleDeFerramentas {
 		} while (opcao != 7);
 	}
 
-	public void subMenu() {
-		System.out.println("\tSistema de Emprestimos de Objetos");
+	public int subMenu() {
 		System.out.println("1. Incluir");
-		System.out.println("2. Consultar");
+		System.out.println("2. Listar");
 		System.out.println("3. Alterar");
-		System.out.println("4. Excluir");
-		System.out.println("5. Sair");
-		System.out.println("Escolha sua opção");
+		System.out.println("4. Excluir/Encerrar");
+		System.out.println("5. Voltar ao menu anterior");
+		System.out.println("6. Sair");
+		System.out.println("Escolha sua opção"); // imprime o sub Menu e aguarda a esolha do usuario
+		int opcao = entrada.nextInt();
+		return opcao;
 	}
 
 	public void pessoa() {
-		int opcao;
+		int opcao = 0;
 		int posicaoLinha;
 		do {
 			System.out.println("\t-----------------------------------");
 			System.out.println("\t Sistema de Emprestimos de Objetos ");
 			System.out.println("\t       Cadastro de Pessoas");
 			System.out.println("\t-----------------------------------");
-			System.out.println("1. Incluir");
-			System.out.println("2. Listar Pessoas Cadastradas");
-			System.out.println("3. Alterar");
-			System.out.println("4. Excluir");
-			System.out.println("5. Voltar ao menu anterior");
-			System.out.println("6. Sair");
-			System.out.println("Escolha sua opção"); // imprime o sub Menu e aguarda a esolha do usuario
-			opcao = entrada.nextInt();
+			opcao = subMenu();// chama o metodo subMenu, reutilizacao de codigo
 			switch (opcao) {
 			case 1: {
 				System.out.println("-------------------");
 				System.out.println("- INCLUIR PESSSOA -");
 				System.out.println("-------------------");
-				posicaoLinha = verificaPosicaoLivreMatriz(pessoa);// verifica se existem posicoes livres e atribui a
-																	// variavel
-				if (posicaoLinha == -1) {// se o metodo retornar -1 nao existem posicoes livres
+				posicaoLinha = verificaPosicaoLivreMatriz(pessoa);// verifica se existem posicoes livres e atribui a variavel
+																 // se o metodo retornar -1 nao existem posicoes livres
+				if (posicaoLinha == -1) {	
 					System.out.println("ATENCÃO, NÃO EXISTEM POSICOES LIVRES");
-				} else { // se encontrar posicoes grava na matriz, nas posicoes que retornaram do metodo
-					System.out.print("NOME: ");
+				} else { 
+					System.out.print("NOME: ");// se encontrar posicoes grava na matriz, nas posicoes que retornaram do metodo
 					pessoa[posicaoLinha][0] = entrada.next().toUpperCase().trim();// para gravar todos os dados em
-																					// maiusculo
-					System.out.print("E-MAIL: ");
+																					// maiusculo e na linha que o metodo
+					System.out.print("E-MAIL: "); // verificaPosiçãoLivreMatriz achou vazia
 					pessoa[posicaoLinha][1] = entrada.next().toUpperCase().trim();
 					System.out.println("CADASTRO REALIZADO COM SUCESSO!");
 				}
@@ -163,14 +185,7 @@ public class ControleDeFerramentas {
 															// cadastrados
 				System.out.println("- LISTAR PESSOAS -");
 				System.out.println("---------------------");
-				for (int i = 0; i < pessoa.length; i++) {
-					System.out.println("ID         NOME             E-MAIL");
-					System.out.print(i + "  -  ");
-					for (int j = 0; j < pessoa.length; j++) {
-						System.out.print("     " + pessoa[i][j] + "  ");
-					}
-					System.out.println("");
-				}
+				listaPessoas();
 				break;
 			}
 			case 3: {
@@ -180,25 +195,21 @@ public class ControleDeFerramentas {
 				System.out.println("- ALTERAR PESSOA -");
 				System.out.println("------------------");
 				System.out.println("A seguir segue a lista de clientes cadastrados");
-				for (int i = 0; i < pessoa.length; i++) {
-					System.out.println("ID         NOME             E-MAIL");
-					System.out.print(i + "  -  ");
-					for (int j = 0; j < pessoa.length; j++) { // exibe os usuarios cadastrados
-						System.out.print("     " + pessoa[i][j] + "  ");
-					}
-					System.out.println("");
-				}
+				listaPessoas(); // chamada de metodo para listar pessoas, reutilizacao de codigo
+
 				System.out.println("Digite o ID da pessoa que quer alterar");
 				idPessoa = entrada.nextInt();
-				existeCadastro = verificaSeExistemPessoasCadastradas(pessoa, idPessoa);// chama o metodo que verifica
-				if (existeCadastro != idPessoa) { // se tem cadastros com o mesmo id fornecido pelo usuario
+				existeCadastro = verificaSeExistemCadastrosMatriz(pessoa, idPessoa);// chama o metodo que verifica
+
+				if (existeCadastro != idPessoa) { 				// se tem cadastros com o mesmo id fornecido pelo usuario
 					System.out.println("NÃO EXISTEM CADASTROS");// caso o valor retornado do metodo seja diferente do
-																// valor
-				} else { // que o usuario informou nao deixa alterar, mas se for
-					System.out.print("Informe o novo Nome: "); // igual atribui o novos valores naquela posicao
-					pessoa[existeCadastro][0] = entrada.next().toUpperCase().trim();
-					System.out.print("Informe o novo E-mail: ");
-					pessoa[existeCadastro][1] = entrada.next().toUpperCase().trim();// grava os dados todos em maiusculo
+																// valor que o usuario informou nao deixa alterar, mas
+																// se for
+				} else { 										// igual atribui o novos valores naquela posicao
+					System.out.print("Informe o novo Nome: ");
+					pessoa[existeCadastro][0] = entrada.next().toUpperCase().trim();// grava os dados todos em maiusculo,																					
+					System.out.print("Informe o novo E-mail: "); 					// na posicao que retornou do metodo
+					pessoa[existeCadastro][1] = entrada.next().toUpperCase().trim();
 					System.out.println("PESSOA ALTERADA COM SUCESSO!");
 				}
 			}
@@ -211,40 +222,36 @@ public class ControleDeFerramentas {
 				System.out.println("- EXCLUIR PESSOA -");
 				System.out.println("------------------");
 				System.out.println("A seguir segue a lista de clientes cadastrados");
-				for (int i = 0; i < pessoa.length; i++) {
-					System.out.println("ID         NOME             E-MAIL");
-					System.out.print(i + "  -  ");
-					for (int j = 0; j < pessoa.length; j++) { // exibe os usuarios cadastrados
-						System.out.print("     " + pessoa[i][j] + "  ");
-					}
-					System.out.println("");
-				}
+				listaPessoas(); // chamada de metodo para listar pessoas, reutilizacao de codigo
+
 				System.out.println("Digite o ID da pessoa que quer excluir");
 				idPessoa = entrada.nextInt();
-				existeCadastro = verificaSeExistemPessoasCadastradas(pessoa, idPessoa);
-				if (existeCadastro == idPessoa) {
-					pessoa[existeCadastro][0] = "";
-					pessoa[existeCadastro][1] = "";
+				existeCadastro = verificaSeExistemCadastrosMatriz(pessoa, idPessoa);
+				if (existeCadastro == idPessoa) { // se encontrar na matriz um id igual ao digitado pelo usuario
+					pessoa[existeCadastro][0] = ""; // todos os indices daquela linha recebem aspas duplas sse não
+					pessoa[existeCadastro][1] = ""; // avisa que tem não tem pessoas com esse id
 					System.out.println("EXCLUIDA COM SUCESSO");
 				} else {
 					System.out.println("NAO EXISTEM PESSOAS CADASTRADAS COM ESSE ID");
 				}
 			}
 				break;
-			case 5:
-				menu();
+			case 5: {
+				menu(); // chamada do menu principal
+			}
 				break;
-			case 6:
-				System.out.println("Saindo...");
+			case 6: {
+				System.out.println("Saindo..."); // saindo do sistema
 				System.exit(6);
+			}
 				break;
 			default:
 				System.out.println("OPCAO INVALIDA!");
 			}
-		} while (opcao != 6);
+		} while (opcao != 6); // vai repetir o menu principal até ser igual a 6
 	}
 
-	public void categoriaObtejo() {
+	public void categoriaFerramenta() {
 		int opcao;
 		int posicaoLinha;
 		do {
@@ -252,14 +259,7 @@ public class ControleDeFerramentas {
 			System.out.println("\t Sistema de Emprestimos de Objetos ");
 			System.out.println("\t Cadastro de Categorias dos Objetos ");
 			System.out.println("\t------------------------------------");
-			System.out.println("1. Incluir");
-			System.out.println("2. Listar categorias Cadastradas");
-			System.out.println("3. Alterar");
-			System.out.println("4. Excluir");
-			System.out.println("5. Voltar ao menu anterior");
-			System.out.println("6. Sair");
-			System.out.println("Escolha sua opção");
-			opcao = entrada.nextInt();
+			opcao = subMenu();
 			switch (opcao) {
 			case 1: {
 				System.out.println("---------------------");
@@ -269,35 +269,68 @@ public class ControleDeFerramentas {
 				if (posicaoLinha == -1) {
 					System.out.println("NAO EXISTEM POSICOES LIVRES");
 				} else {
-					System.out.println("Nome da Categoria");
+					System.out.println("Nome da Categoria"); // mesmo funcionamento do metodo Pessoa
 					categoriaFerramentas[posicaoLinha] = entrada.next();
 				}
 			}
 				break;
-			case 2:
+			case 2: {
 				System.out.println("--------------------");
 				System.out.println("- LISTAR CATEGORIA -");
 				System.out.println("--------------------");
-				for (int i = 0; i < categoriaFerramentas.length; i++) {
-					System.out.println(i + "  -  " + categoriaFerramentas[i]);
-				}
+				listaCategoriaFerramentas();
+			}
 				break;
-			case 3:
+			case 3: {
 				System.out.println("---------------------");
 				System.out.println("- ALTERAR CATEGORIA -");
 				System.out.println("---------------------");
+				System.out.println("A seguir segue a lista de clientes cadastrados");
+				listaCategoriaFerramentas(); // chamada de metodo para listar pessoas, reutilizacao de codigo
+
+				System.out.println("Digite o ID da Categoria que quer alterar");
+				int idCategoria = entrada.nextInt();
+
+				int existeCadastro = verificaSeExistemCadastrosVetor(categoriaFerramentas, idCategoria);
+
+				if (existeCadastro != idCategoria) { // verifica se tem cadastros com o mesmo id fornecido pelo usuario,
+					System.out.println("NÃO EXISTEM CADASTROS");// caso o valor retornado do metodo seja diferente do																
+				} else { 										// valor que o usuario informou nao deixa alterar, mas se for
+					System.out.print("Informe o novo Nome: "); // igual atribui o novos valores naquela posicao
+					categoriaFerramentas[existeCadastro] = entrada.next().toUpperCase().trim();// grava os dados todos em maiusculo,
+					System.out.println("PESSOA ALTERADA COM SUCESSO!"); 						// na posicao que retornou do metodo
+					
+				}
+			}
 				break;
-			case 4:
+			case 4: {
 				System.out.println("---------------------");
 				System.out.println("- EXCLUIR CATEGORIA -");
 				System.out.println("---------------------");
+				System.out.println("A seguir segue a lista de categorias cadastrados");
+				listaCategoriaFerramentas(); // chamada de metodo para listar pessoas, reutilizacao de codigo
+
+				System.out.println("Digite o ID da categoria que quer excluir");
+				int idCategoria = entrada.nextInt();
+				int existeCadastro = verificaSeExistemCadastrosVetor(categoriaFerramentas, idCategoria);
+				if (existeCadastro == idCategoria) { // se encontrar na matriz um id igual ao digitado pelo usuario
+					categoriaFerramentas[existeCadastro] = ""; // todos os indices daquela linha recebem aspas duplas
+																// sse não
+					categoriaFerramentas[existeCadastro] = ""; // avisa que tem não tem pessoas com esse id
+					System.out.println("EXCLUIDA COM SUCESSO");
+				} else {
+					System.out.println("NAO EXISTEM PESSOAS CADASTRADAS COM ESSE ID");
+				}
+			}
 				break;
-			case 5:
+			case 5: {
 				menu();
+			}
 				break;
-			case 6:
+			case 6: {
 				System.out.println("SAINDO...");
 				System.exit(6);
+			}
 				break;
 			default:
 				System.out.println("OPCAO INDALIDA!");
@@ -313,42 +346,41 @@ public class ControleDeFerramentas {
 			System.out.println("\t Sistema de Emprestimos de Objetos ");
 			System.out.println("\t       Cadastro de Objetos");
 			System.out.println("\t-----------------------------------");
-			System.out.println("1. Incluir");
-			System.out.println("2. Listar objetos Cadastrados");
-			System.out.println("3. Alterar");
-			System.out.println("4. Excluir");
-			System.out.println("5. Voltar ao menu anterior");
-			System.out.println("6. Sair");
-			System.out.println("Escolha sua opção");
-			opcao = entrada.nextInt();
+			opcao = subMenu();
 			switch (opcao) {
 
-			case 1:
+			case 1: {
 				System.out.println("------------------");
 				System.out.println("- INCLUIR OBJETO -");
 				System.out.println("------------------");
+			}
 				break;
-			case 2:
+			case 2: {
 				System.out.println("--------------------");
 				System.out.println("- CONSULTAR OBJETO -");
 				System.out.println("--------------------");
+			}
 				break;
-			case 3:
+			case 3: {
 				System.out.println("------------------");
 				System.out.println("- ALTERAR OBJETO -");
 				System.out.println("------------------");
+			}
 				break;
-			case 4:
+			case 4: {
 				System.out.println("------------------");
 				System.out.println("- EXCLUIR OBJETO -");
 				System.out.println("------------------");
+			}
 				break;
-			case 5:
+			case 5: {
 				menu();
+			}
 				break;
-			case 6:
+			case 6: {
 				System.out.println("SAINDO...");
 				System.exit(6);
+			}
 				break;
 			default:
 				System.out.println("OPCAO INVALIDA!");
@@ -363,41 +395,40 @@ public class ControleDeFerramentas {
 			System.out.println("\t Sistema de Emprestimos de Objetos ");
 			System.out.println("\t            Manutencoes            ");
 			System.out.println("\t-----------------------------------");
-			System.out.println("1. Incluir");
-			System.out.println("2. Listar manutencoes");
-			System.out.println("3. Alterar");
-			System.out.println("4. Encerar Manutencao");
-			System.out.println("5. Voltar ao menu anterior");
-			System.out.println("6. Sair");
-			System.out.println("Escolha sua opção");
-			opcao = entrada.nextInt();
+			opcao = subMenu();
 			switch (opcao) {
-			case 1:
+			case 1: {
 				System.out.println("----------------------");
 				System.out.println("- INCLUIR MANUTENCAO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 2:
+			case 2: {
 				System.out.println("---------------------");
 				System.out.println("- LISTAR MANUTENCAO -");
 				System.out.println("---------------------");
+			}
 				break;
-			case 3:
+			case 3: {
 				System.out.println("----------------------");
 				System.out.println("- ALTERAR MANUTENCAO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 4:
+			case 4: {
 				System.out.println("----------------------");
 				System.out.println("- ENCERAR MANUTENCAO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 5:
+			case 5: {
 				menu();
+			}
 				break;
-			case 6:
+			case 6: {
 				System.out.println("SAINDO...");
 				System.exit(6);
+			}
 				break;
 			default:
 				System.out.println("OPCAO INVALIDA!");
@@ -413,41 +444,40 @@ public class ControleDeFerramentas {
 			System.out.println("\t Sistema de Emprestimos de Objetos ");
 			System.out.println("             EMPRESTIMOS             ");
 			System.out.println("\t-----------------------------------");
-			System.out.println("1. Incluir");
-			System.out.println("2. Listar Emprestimos");
-			System.out.println("3. Alterar");
-			System.out.println("4. Encerar Emprestimo");
-			System.out.println("5. Voltar ao menu anterior");
-			System.out.println("6. Sair");
-			System.out.println("Escolha sua opção");
-			opcao = entrada.nextInt();
+			opcao = subMenu();
 			switch (opcao) {
-			case 1:
+			case 1: {
 				System.out.println("----------------------");
 				System.out.println("- INCLUIR EMPRESTIMO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 2:
+			case 2: {
 				System.out.println("---------------------");
 				System.out.println("- LISTAR EMPRESTIMO -");
 				System.out.println("---------------------");
+			}
 				break;
-			case 3:
+			case 3: {
 				System.out.println("----------------------");
 				System.out.println("- ALTERAR EMPRESTIMO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 4:
+			case 4: {
 				System.out.println("----------------------");
 				System.out.println("- ENCERAR EMPRESTIMO -");
 				System.out.println("----------------------");
+			}
 				break;
-			case 5:
+			case 5: {
 				menu();
+			}
 				break;
-			case 6:
+			case 6: {
 				System.out.println("SAINDO...");
 				System.exit(6);
+			}
 				break;
 			default:
 				System.out.println("OPCAO INVALIDA!");
